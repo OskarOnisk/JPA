@@ -1,7 +1,6 @@
 package com.jpacourse.persistance.repository;
 
-import com.jpacourse.persistance.entity.AddressEntity;
-import com.jpacourse.persistance.entity.PatientEntity;
+import com.jpacourse.persistance.entity.DoctorEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -12,11 +11,10 @@ import java.util.List;
 
 
 @Repository
-public interface PatientRepository extends JpaRepository<PatientEntity, Long>, JpaSpecificationExecutor<PatientEntity>
+public interface DoctorRepository extends JpaRepository<DoctorEntity, Long>, JpaSpecificationExecutor<DoctorEntity>
 {
 
-    @Query("SELECT pat FROM PatientEntity pat where pat.id = :pId ")
-    PatientEntity findPatientById(@Param("pId") Long id);
-
+    @Query("SELECT doc FROM DoctorEntity doc where doc.id = :pId ")
+    DoctorEntity findDoctorById(@Param("pId") Long id);
 
 }

@@ -11,12 +11,16 @@ public class AddressEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column
 	private String city;
 
+	@Column
 	private String addressLine1;
 
+	@Column
 	private String addressLine2;
 
+	@Column
 	private String postalCode;
 
 	public Long getId() {

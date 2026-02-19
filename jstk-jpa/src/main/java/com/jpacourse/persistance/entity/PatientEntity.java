@@ -19,16 +19,32 @@ public class PatientEntity {
 	@Column(nullable = false)
 	private String lastName;
 
-	@Column(nullable = false)
+	@Column
 	private String telephoneNumber;
 
+	@Column
 	private String email;
 
-	@Column(nullable = false)
+	@Column
 	private String patientNumber;
 
-	@Column(nullable = false)
+	@Column
 	private LocalDate dateOfBirth;
+
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "address_id")
+	private AddressEntity address;
+
+	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	private List<VisitEntity> visits;
+
+	public List<VisitEntity> getVisits() {
+		return visits;
+	}
+
+	public void setVisits(List<VisitEntity> visits) {
+		this.visits = visits;
+	}
 
 	public Long getId() {
 		return id;
@@ -86,4 +102,11 @@ public class PatientEntity {
 		this.dateOfBirth = dateOfBirth;
 	}
 
+	public AddressEntity getAddress() {
+		return address;
+	}
+
+	public void setAddress(AddressEntity address) {
+		this.address = address;
+	}
 }
