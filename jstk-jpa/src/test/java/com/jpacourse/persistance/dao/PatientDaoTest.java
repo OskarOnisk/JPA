@@ -80,4 +80,40 @@ public class PatientDaoTest {
                 visitTime.equals(v.getTime()) && v.getPatient() != null && patientId.equals(v.getPatient().getId())
         && v.getDoctor() != null && doctorId.equals(v.getDoctor().getId()))).isTrue();
     }
+
+    @Transactional
+    @Test
+    void testShouldFindPatientByLastName(){
+        //given
+
+        String lastName = "Kowalski";
+
+        //when
+
+        List<PatientEntity> result = patientRepository.findByLastNameIgnoreCase(lastName);
+
+        //then
+
+        assertThat(result).isNotNull();
+        assertThat(result).isNotEmpty();
+        assertThat(result).allMatch(p -> lastName.equals(p.getLastName()));
+    }
+
+    @Transactional
+    @Test
+    void testShouldFindPatientWithMoreThanXVisits(){
+        //given
+
+        Long x = 2L;
+
+        //when
+
+        List<PatientEntity> result = patientRepository.findVisitsByMinVisits(x);
+
+        //than
+
+        assertThat(result).isNotNull();
+        assertThat(result).isNotEmpty();
+        assertThat(result).anyMatch(p -> p.getId().equals(1L));
+    }
 }

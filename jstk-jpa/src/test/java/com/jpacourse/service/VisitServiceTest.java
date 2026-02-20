@@ -18,9 +18,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
-public class PatientServiceTest
+public class VisitServiceTest
 {
     @Autowired
     private PatientService patientService;
@@ -34,94 +35,55 @@ public class PatientServiceTest
     @Autowired
     private DoctorRepository doctorRepository;
 
+    @Autowired
+    private VisitService visitService;
+
     @Test
     @Transactional
-    void testShouldDeletePatientAndCascadeDeleteVisitsButNotDoctors()
-    {
+    void testShouldReturnVisitsForExistingPatient(){
         //given
 
-        DoctorEntity doctor = new DoctorEntity();
-        doctor.setFirstName("Adam");
-        doctor.setLastName("Nowak");
-        doctor.setDoctorNumber("Doctor1");
-        DoctorEntity savedDoctor = doctorRepository.save(doctor);
-
-        PatientEntity patient = new PatientEntity();
-        patient.setFirstName("Adam");
-        patient.setLastName("Nowak");
-        patient.setPatientNumber("Patient1");
-        patient.setDateOfBirth(LocalDate.of(1980, 1, 1));
-
-        VisitEntity visit = new VisitEntity();
-
-        visit.setPatient(patient);
-        visit.setDoctor(savedDoctor);
-        visit.setTime(LocalDateTime.now());
-        visit.setDescription("Do usuniecia przez servis");
-        patient.setVisits(List.of(visit));
-
-        PatientEntity savedPatient = patientRepository.save(patient);
-
-        Long patientId = savedPatient.getId();
-        Long visitId = savedPatient.getVisits().get(0).getId();
-        Long doctorId = savedDoctor.getId();
-
-        assertThat(patientRepository.findById(patientId)).isPresent();
-        assertThat(visitRepository.findById(visitId)).isPresent();
-        assertThat(doctorRepository.findById(doctorId)).isPresent();
+        Long patientId = 1L;
 
         //when
 
-        patientService.deleteById(patientId);
+        List<VisitTO> visits = visitService.findVisitByPatientId(patientId);
 
         //then
 
-        assertThat(visitRepository.findById(visitId)).isEmpty();
-        assertThat(doctorRepository.findById(doctorId)).isPresent();
-        assertThat(patientRepository.findById(patientId)).isEmpty();
+        assertThat(visits).isNotNull();
+        assertThat(visits.size()).isEqualTo(3);
 
     }
 
     @Test
     @Transactional
-    void testShouldReturnPatientTOByIdWithVisitsStructure()
-    {
+    void testShouldReturnVisitsEmptyListWhenNoPatientHasNoVisit(){
         //given
 
-        DoctorEntity doctor = new DoctorEntity();
-        doctor.setFirstName("Adam");
-        doctor.setLastName("Nowak");
-        doctor.setDoctorNumber("Doctor1");
-        DoctorEntity savedDoctor = doctorRepository.save(doctor);
-        PatientEntity patient = new PatientEntity();
-        patient.setFirstName("Adam");
-        patient.setLastName("Nowak");
-        patient.setPatientNumber("Patient1");
-        patient.setDateOfBirth(LocalDate.of(1980, 1, 1));
-        VisitEntity visit = new VisitEntity();
-        visit.setPatient(patient);
-        visit.setDoctor(savedDoctor);
-        visit.setTime(LocalDateTime.now().plusDays(1));
-        patient.setVisits(List.of(visit));
-        PatientEntity savedPatient = patientRepository.save(patient);
-        Long patientId = savedPatient.getId();
+        Long patientId =  3L;
 
         //when
 
-        PatientTO result = patientService.findById(patientId);
+        List<VisitTO> visits = visitService.findVisitByPatientId(patientId);
 
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(patientId);
-        assertThat(result.getFirstName()).isEqualTo("Adam");
-        assertThat(result.getLastName()).isEqualTo("Nowak");
-        assertThat(result.getVisits()).isNotNull();
-        assertThat(result.getVisits()).hasSize(1);
-        VisitTO visitTO = result.getVisits().get(0);
-        assertThat(visitTO.getVisitTime()).isEqualTo(visit.getTime());
-        assertThat(visitTO.getDoctorFirstName()).isEqualTo("Adam");
-        assertThat(visitTO.getDoctorLastName()).isEqualTo("Nowak");
+        //than
+
+        assertThat(visits).isNotNull();
+        assertThat(visits).isEmpty();
     }
 
+    @Test
+    @Transactional
+    void testShouldThrowWhenPatientIdIsNull(){
+        assertThatThrownBy(() -> visitService.findVisitByPatientId(null)).isInstanceOf(IllegalArgumentException.class);
 
+    }
 
+    @Test
+    @Transactional
+    void testShouldThrowWhenPatientIdIsNonPositive(){
+        assertThatThrownBy(() -> visitService.findVisitByPatientId(0L)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> visitService.findVisitByPatientId(-1L)).isInstanceOf(IllegalArgumentException.class);
+    }
 }

@@ -3,7 +3,7 @@ package com.jpacourse.persistance.specification;
 import com.jpacourse.persistance.entity.AddressEntity;
 import org.springframework.data.jpa.domain.Specification;
 
-public class AddressSpecification
+public class PatientSpecification
 {
 
     public static Specification<AddressEntity> byAddressLine1(final String addressLine1) {

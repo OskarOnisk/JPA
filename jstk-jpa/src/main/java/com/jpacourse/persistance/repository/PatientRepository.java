@@ -18,5 +18,10 @@ public interface PatientRepository extends JpaRepository<PatientEntity, Long>, J
     @Query("SELECT pat FROM PatientEntity pat where pat.id = :pId ")
     PatientEntity findPatientById(@Param("pId") Long id);
 
+    @Query("SELECT p FROM PatientEntity p WHERE LOWER(p.lastName) LIKE LOWER(CONCAT('%', :lastNamePart, '%'))")
+    List<PatientEntity> findByLastNameIgnoreCase(@Param("lastNamePart") String lastNamePart);
+
+    @Query("SELECT p FROM PatientEntity p LEFT JOIN p.visits v GROUP BY p HAVING COUNT(v) > :minVisits")
+    List<PatientEntity> findVisitsByMinVisits(@Param("minVisits") Long minVisits);
 
 }

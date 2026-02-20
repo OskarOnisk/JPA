@@ -17,5 +17,7 @@ public interface VisitRepository extends JpaRepository<VisitEntity, Long>, JpaSp
 @Query("SELECT vis FROM VisitEntity vis WHERE vis.id =:pId")
     List<VisitEntity> findVisitById(@Param("pId") Long Id);
 
+@Query("SELECT v FROM VisitEntity v WHERE v.patient.id = :patientId")
+    List<VisitEntity> findVisitByPatientId(@Param("patientId") Long patientId);
 
 }
