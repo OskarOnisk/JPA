@@ -52,5 +52,16 @@ public class VisitServiceImpl implements VisitService {
         return VisitMapper.mapToTO(visitRepository.save(entity));
     }
 
+    @Override
+    public List<VisitTO> findVisitByPatientId(Long patientId) {
+        if (patientId == null) {
+            throw new IllegalArgumentException("patientId cannot be null");
+        }
+        if (patientId <= 0){
+            throw new IllegalArgumentException("patientId must be greater than 0");
+        }
+        return visitRepository.findVisitByPatientId(patientId).stream().map(VisitMapper::mapToTO).toList();
+    }
+
 
 }

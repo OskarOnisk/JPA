@@ -1,6 +1,7 @@
 package com.jpacourse.service;
 
 import com.jpacourse.dto.VisitTO;
+import com.jpacourse.persistance.entity.VisitEntity;
 
 import java.util.List;
 
@@ -11,5 +12,7 @@ public interface VisitService
     List<VisitTO> findByDoctorId(final Long doctorId);
 
     VisitTO create(final VisitTO visitTO);
+
+    List<VisitTO> findVisitByPatientId(final Long patientId);
 
 }
